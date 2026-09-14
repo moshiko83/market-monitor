@@ -141,13 +141,13 @@ def refresh_fertilizer(metrics):
             # first (front-month) row for this ticker prefix, then its quote + % change
             m = re.search(
                 pfx + r"[A-Z]?\d{2}</span>.*?commodity-quote\">\$([\d,]+(?:\.\d+)?)\s*/\s*ton"
-                r".*?commodity-change commodity-change-(\w+)\"[^%]*?([\d.]+)%",
+                r".*?commodity-change(?: commodity-change-(\w+))?\"[^%]*?([\d.]+)%",
                 html, re.S)
             if not m:
                 print(f"  ! {mid:14} farmbucks parse miss — keeping previous", file=sys.stderr)
                 continue
             price = m.group(1)
-            cls, pct = m.group(2), m.group(3)
+            cls, pct = (m.group(2) or ""), m.group(3)
             direction = "up" if "positive" in cls else ("down" if "negative" in cls else "flat")
             if float(pct) == 0:
                 chg, direction = "flat d/d", "flat"
