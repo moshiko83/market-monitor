@@ -13,7 +13,7 @@ topped up by hand or on request.
 Nothing here can fail the whole file: each symbol is fetched in its own try, and
 if a fetch fails the previous value is kept.
 """
-import json, os, sys, time, urllib.request, urllib.error, urllib.parse
+import json, os, re, sys, time, urllib.request, urllib.error, urllib.parse
 from datetime import datetime, timezone
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -114,6 +114,59 @@ def update_one(metrics, mid, sym, divisor, dec, live_flag=True):
     return True
 
 
+# ---- Fertilizer FOB (CME swaps) via farmbucks -----------------------------
+# farmbucks serves plain server-rendered HTML with the CME cleared-swap tickers
+# and their front-month settlement prices, updated each trading day. Only Urea
+# (UFV, FOB US Gulf) and DAP (DFN, FOB NOLA) exist as liquid contracts; there is
+# no CME contract for MAP or potash, and UAN barely trades, so those are not here.
+FARMBUCKS_URL = "https://farmbucks.com/futures/fertilizer"
+# id -> ticker prefix on farmbucks
+FERT = {
+    "urea_fob": "UFV",
+    "dap_fob":  "DFN",
+}
+
+
+def refresh_fertilizer(metrics):
+    try:
+        req = urllib.request.Request(FARMBUCKS_URL, headers=UA)
+        html = urllib.request.urlopen(req, timeout=25).read().decode("utf-8", "replace")
+    except Exception as e:
+        print(f"  ! farmbucks fetch FAILED ({e}) — keeping previous", file=sys.stderr)
+        return 0
+    ok = 0
+    today = datetime.now(timezone.utc).strftime("%b %-d")
+    for mid, pfx in FERT.items():
+        try:
+            # first (front-month) row for this ticker prefix, then its quote + % change
+            m = re.search(
+                pfx + r"[A-Z]?\d{2}</span>.*?commodity-quote\">\$([\d,]+(?:\.\d+)?)\s*/\s*ton"
+                r".*?commodity-change commodity-change-(\w+)\"[^%]*?([\d.]+)%",
+                html, re.S)
+            if not m:
+                print(f"  ! {mid:14} farmbucks parse miss — keeping previous", file=sys.stderr)
+                continue
+            price = m.group(1)
+            cls, pct = m.group(2), m.group(3)
+            direction = "up" if "positive" in cls else ("down" if "negative" in cls else "flat")
+            if float(pct) == 0:
+                chg, direction = "flat d/d", "flat"
+            else:
+                sign = "+" if direction == "up" else "−"
+                chg = f"{sign}{pct}% d/d"
+            entry = metrics.setdefault(mid, {})
+            entry["num"] = price
+            entry["chg"] = chg
+            entry["dir"] = direction
+            entry["asOf"] = today
+            entry["q"] = "live"
+            ok += 1
+            print(f"  ✓ {mid:14} farmbucks  -> {price:>12}  {chg}")
+        except Exception as e:
+            print(f"  ! {mid:14} farmbucks error ({e}) — keeping previous", file=sys.stderr)
+    return ok
+
+
 def main():
     data = {"generated": None, "metrics": {}}
     if os.path.exists(DATA):
@@ -136,12 +189,15 @@ def main():
         update_one(metrics, mid, sym, div, dec, live_flag=False)
         time.sleep(0.4)
 
+    print("Refreshing fertilizer FOB (Urea, DAP) from farmbucks...")
+    fok = refresh_fertilizer(metrics)
+
     data["generated"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
     with open(DATA, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
         f.write("\n")
 
-    print(f"\nDone. {ok}/{len(LIVE)} live metrics refreshed. Wrote {DATA}")
+    print(f"\nDone. {ok}/{len(LIVE)} Yahoo + {fok}/{len(FERT)} farmbucks metrics refreshed. Wrote {DATA}")
     # Never exit non-zero for partial failures — a stale tile beats a broken run.
     return 0
 
