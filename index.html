@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TwinsBridge Market Monitor</title>
+<style>
+  :root {
+    color-scheme: light;
+    --plane: #eef1ef;
+    --surface: #ffffff;
+    --surface-2: #f6f8f7;
+    --ink: #101a19;
+    --ink-2: #4b5654;
+    --muted: #8b938f;
+    --line: #e2e7e4;
+    --line-strong: #d3dad7;
+    --accent: #0b6b62;
+    --accent-2: #0a544d;
+    --accent-soft: #dcebe8;
+    --on-accent: #f3faf8;
+    --up: #0a8f43;
+    --up-soft: #e2f3e8;
+    --down: #c0392f;
+    --down-soft: #f8e6e3;
+    --lagged: #b7791a;
+    --lagged-soft: #f7edda;
+    --proxy: #7c847f;
+    --proxy-soft: #ebeeec;
+    --shadow: 0 1px 2px rgba(16,26,25,.05), 0 4px 16px rgba(16,26,25,.04);
+    --radius: 12px;
+    --f-display: "Archivo", system-ui, sans-serif;
+    --f-body: "IBM Plex Sans", system-ui, sans-serif;
+    --f-mono: "IBM Plex Mono", ui-monospace, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --plane: #0b1211; --surface: #121d1b; --surface-2: #0f1a18;
+      --ink: #f1f5f4; --ink-2: #aab4b1; --muted: #7c857f;
+      --line: #23302e; --line-strong: #2c3b38;
+      --accent: #34b6a8; --accent-2: #2aa093; --accent-soft: #12312d; --on-accent: #04100e;
+      --up: #35c46e; --up-soft: #133223; --down: #e97066; --down-soft: #341c1a;
+      --lagged: #e0ad3f; --lagged-soft: #322815; --proxy: #8a938e; --proxy-soft: #1e2725;
+      --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 20px rgba(0,0,0,.3);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --plane: #0b1211; --surface: #121d1b; --surface-2: #0f1a18;
+    --ink: #f1f5f4; --ink-2: #aab4b1; --muted: #7c857f;
+    --line: #23302e; --line-strong: #2c3b38;
+    --accent: #34b6a8; --accent-2: #2aa093; --accent-soft: #12312d; --on-accent: #04100e;
+    --up: #35c46e; --up-soft: #133223; --down: #e97066; --down-soft: #341c1a;
+    --lagged: #e0ad3f; --lagged-soft: #322815; --proxy: #8a938e; --proxy-soft: #1e2725;
+    --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 20px rgba(0,0,0,.3);
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--plane); color: var(--ink); font-family: var(--f-body); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  img { max-width: 100%; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 20px 64px; }
+
+  header.mast { padding: 30px 0 22px; }
+  .mast-top { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 18px; }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .brand-mark { flex: none; width: 42px; height: 42px; }
+  .brand h1 { font-family: var(--f-display); font-weight: 700; font-size: 1.5rem; letter-spacing: -.02em; margin: 0; line-height: 1.05; }
+  .brand .sub { font-size: .78rem; letter-spacing: .13em; text-transform: uppercase; color: var(--muted); margin-top: 3px; font-weight: 600; }
+  .mast-meta { display: flex; flex-direction: column; gap: 7px; align-items: flex-end; }
+  .stamp-row { display: flex; align-items: center; gap: 10px; }
+  .stamp { font-family: var(--f-mono); font-size: .8rem; color: var(--ink); font-weight: 500; }
+  .live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--up); flex: none; box-shadow: 0 0 0 0 rgba(10,143,67,.5); }
+  @media (prefers-reduced-motion: no-preference) { .live-dot.on { animation: pulse 2s infinite; } }
+  @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(10,143,67,.45)} 70%{box-shadow:0 0 0 7px rgba(10,143,67,0)} 100%{box-shadow:0 0 0 0 rgba(10,143,67,0)} }
+  .cad { color: var(--muted); font-size: .78rem; }
+  .btns { display: flex; gap: 8px; }
+  .btn { border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink-2); font-family: var(--f-body); font-size: .76rem; font-weight: 600; padding: 6px 12px; border-radius: 999px; cursor: pointer; letter-spacing: .02em; display: inline-flex; align-items: center; gap: 6px; }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .btn.primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+  .btn.primary:hover { background: var(--accent-2); color: var(--on-accent); }
+  .btn svg { width: 13px; height: 13px; }
+  .btn.spin svg { animation: spin .7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .rule { height: 1px; background: var(--line); margin: 20px 0 0; }
+
+  .controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 20px 0 8px; }
+  .search { flex: 1 1 220px; max-width: 340px; position: relative; }
+  .search input { width: 100%; font-family: var(--f-body); font-size: .88rem; padding: 9px 12px 9px 34px; border: 1px solid var(--line-strong); border-radius: 9px; background: var(--surface); color: var(--ink); }
+  .search input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+  .search svg { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); width: 15px; height: 15px; color: var(--muted); }
+  .chips { display: flex; flex-wrap: wrap; gap: 7px; }
+  .chip { font-size: .76rem; font-weight: 600; padding: 6px 11px; border-radius: 999px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink-2); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; letter-spacing: .01em; }
+  .chip .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .chip[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 16px 22px; padding: 13px 16px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; margin: 12px 0 4px; font-size: .78rem; color: var(--ink-2); }
+  .legend .li { display: flex; align-items: center; gap: 8px; }
+  .legend .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+  .legend b { color: var(--ink); font-weight: 600; }
+
+  section.grp { margin-top: 30px; }
+  .grp-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 13px; }
+  .grp-head h2 { font-family: var(--f-display); font-size: 1.02rem; font-weight: 700; letter-spacing: -.01em; margin: 0; }
+  .grp-head .idx { font-family: var(--f-mono); font-size: .72rem; color: var(--accent); font-weight: 600; letter-spacing: .05em; padding-top: 2px; }
+  .grp-head .ln { flex: 1; height: 1px; background: var(--line); align-self: center; }
+  .grp-head .cnt { font-size: .74rem; color: var(--muted); font-family: var(--f-mono); }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(238px, 1fr)); gap: 14px; }
+
+  .tile { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 15px 16px 13px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 9px; position: relative; overflow: hidden; }
+  .tile::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--q); }
+  .tile[data-q="live"] { --q: var(--up); }
+  .tile[data-q="lagged"] { --q: var(--lagged); }
+  .tile[data-q="proxy"] { --q: var(--proxy); }
+  .t-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+  .t-name { font-size: .82rem; font-weight: 600; color: var(--ink); line-height: 1.25; }
+  .t-unit { font-size: .7rem; color: var(--muted); font-weight: 500; margin-top: 2px; letter-spacing: .01em; }
+  .qflag { flex: none; font-size: .6rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; padding: 3px 6px; border-radius: 5px; }
+  .qflag[data-q="live"] { color: var(--up); background: var(--up-soft); }
+  .qflag[data-q="lagged"] { color: var(--lagged); background: var(--lagged-soft); }
+  .qflag[data-q="proxy"] { color: var(--proxy); background: var(--proxy-soft); }
+  .t-lab { font-size: .58rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); margin-bottom: -3px; }
+  .t-val { display: flex; align-items: baseline; gap: 7px; flex-wrap: wrap; }
+  .t-val .num { font-family: var(--f-mono); font-size: 1.6rem; font-weight: 600; letter-spacing: -.02em; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1; }
+  .t-val .cur { font-family: var(--f-mono); font-size: .78rem; color: var(--muted); font-weight: 500; }
+  .chg { display: inline-flex; align-items: center; gap: 4px; font-family: var(--f-mono); font-size: .74rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .chg[data-d="up"] { color: var(--up); } .chg[data-d="down"] { color: var(--down); }
+  .chg[data-d="flat"], .chg[data-d="na"] { color: var(--muted); }
+  .chg svg { width: 11px; height: 11px; }
+
+  .ytd { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px; background: var(--surface-2); }
+  .ytd .lab { font-size: .58rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); line-height: 1.1; }
+  .ytd .aval { font-family: var(--f-mono); font-size: .92rem; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .ytd .val { font-family: var(--f-mono); font-size: .72rem; font-weight: 600; font-variant-numeric: tabular-nums; margin-left: auto; white-space: nowrap; }
+  .ytd .val[data-d="up"] { color: var(--up); } .ytd .val[data-d="down"] { color: var(--down); }
+  .ytd .val[data-d="flat"] { color: var(--ink-2); } .ytd .val[data-d="na"] { color: var(--muted); font-weight: 500; }
+
+  .t-note { font-size: .69rem; color: var(--ink-2); line-height: 1.35; background: var(--surface-2); border-radius: 7px; padding: 6px 8px; }
+  .t-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-top: 9px; border-top: 1px solid var(--line); }
+  .t-src { font-size: .68rem; color: var(--muted); text-decoration: none; letter-spacing: .01em; }
+  .t-src:hover { color: var(--accent); }
+  .t-as { font-size: .67rem; color: var(--muted); font-family: var(--f-mono); white-space: nowrap; }
+
+  .empty { display: none; text-align: center; color: var(--muted); padding: 40px; font-size: .9rem; }
+
+  footer { margin-top: 42px; padding-top: 20px; border-top: 1px solid var(--line); font-size: .76rem; color: var(--muted); line-height: 1.6; }
+  footer b { color: var(--ink-2); font-weight: 600; }
+  footer a { color: var(--accent); text-decoration: none; } footer a:hover { text-decoration: underline; }
+
+  @media (max-width: 620px) {
+    .mast-top { flex-direction: column; }
+    .mast-meta { align-items: flex-start; }
+    .grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .tile { padding: 13px 13px 11px; }
+    .t-val .num { font-size: 1.38rem; }
+  }
+  @media (max-width: 400px) { .grid { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: no-preference) {
+    .tile { transition: border-color .15s ease, transform .15s ease; }
+    .tile:hover { border-color: var(--line-strong); transform: translateY(-1px); }
+  }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+</head>
+<body>
+<div class="wrap">
+  <header class="mast">
+    <div class="mast-top">
+      <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <rect x="1" y="1" width="46" height="46" rx="10" fill="var(--accent-soft)"/>
+          <path d="M6 31c4 0 4-9 8-9s4 9 8 9 4-9 8-9 4 9 8 9 4-9 4-9" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+          <path d="M14 22V13M34 22V13" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M11 13h6M31 13h6" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round"/>
+        </svg>
+        <div>
+          <h1>Market Monitor</h1>
+          <div class="sub">TwinsBridge Trade Intelligence</div>
+        </div>
+      </div>
+      <div class="mast-meta">
+        <div class="stamp-row"><span class="live-dot" id="livedot"></span><span class="stamp" id="stamp">Loading latest data…</span></div>
+        <span class="cad" id="cad">Auto-updated every morning · live price vs. 2026 average</span>
+        <div class="btns">
+          <button class="btn primary" id="refreshBtn" type="button" title="Re-fetch the latest data now">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M21 12a9 9 0 1 1-2.64-6.36M21 3v6h-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Refresh
+          </button>
+          <button class="btn" id="themeBtn" type="button">◑ Theme</button>
+        </div>
+      </div>
+    </div>
+    <div class="rule"></div>
+  </header>
+
+  <div class="controls">
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4" stroke-linecap="round"/></svg>
+      <input type="text" id="search" placeholder="Filter metrics…" aria-label="Filter metrics">
+    </div>
+    <div class="chips" id="qchips">
+      <button class="chip" data-q="live" aria-pressed="false"><span class="dot" style="background:var(--up)"></span>Live</button>
+      <button class="chip" data-q="lagged" aria-pressed="false"><span class="dot" style="background:var(--lagged)"></span>Lagged</button>
+      <button class="chip" data-q="proxy" aria-pressed="false"><span class="dot" style="background:var(--proxy)"></span>Proxy</button>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span class="li"><span class="dot" style="background:var(--up)"></span><b>Live</b>&nbsp;— auto-refreshed daily from a public market feed</span>
+    <span class="li"><span class="dot" style="background:var(--lagged)"></span><b>Lagged</b>&nbsp;— most recent print, a few days/weeks old</span>
+    <span class="li"><span class="dot" style="background:var(--proxy)"></span><b>Proxy</b>&nbsp;— stand-in for a subscription-only benchmark</span>
+  </div>
+
+  <main id="board"></main>
+  <div class="empty" id="empty">No metrics match your filter.</div>
+
+  <footer>
+    <p><b>How to read this.</b> Each tile shows the latest public <b>price</b> (large) with its short-term move, and below it the <b>2026 year-to-date average price</b> plus how far the current price sits above or below that average (<b>% vs avg</b>) — so you can see at a glance whether today's level is rich or cheap versus the year's running average. The colored spine and flag mark data quality: <b>Live</b> figures auto-refresh each morning; <b>Proxy</b> figures stand in for benchmarks behind paid services (Argus, ICIS, Fastmarkets, Fertecon) and are directional.</p>
+    <p style="margin-top:10px"><b>What updates automatically.</b> The <b>Live</b> tiles — natural gas, COMEX copper, the grains &amp; cattle, Class III milk, and the FX pairs — are pulled fresh every morning by an automated job from a public futures feed, with no one having to touch it. The <b>Lagged</b> and <b>Proxy</b> tiles — the Gulf/NOLA and retail fertilizer benchmarks, LME metals, sulfuric acid, manganese, freight indices and the Panama draft — have no free live feed, so they carry the most recent published print and are topped up periodically. Their as-of date is shown on each tile.</p>
+    <p style="margin-top:10px"><b>On the AVG YTD figure.</b> The average is the 2026 year-to-date average price. It is measured where a free daily/monthly 2026 history exists (FX, natural gas, milk, metals) and estimated where the full history is paywalled (freight, grains, cattle, Gulf/NOLA fertilizer) — treat the % vs avg there as directional. UAN shows no average (barely-traded contract).</p>
+    <p style="margin-top:10px"><b>Refresh</b> re-fetches the latest published <code>data.json</code> — the Live tiles reflect whatever the morning job last wrote. Built for the TwinsBridge team · Public market data · Not investment advice. Verify against your own feeds before trading decisions.</p>
+  </footer>
+</div>
+
+<script>
+/* ============================================================================
+   TwinsBridge Market Monitor
+   The page renders from the METRICS defaults below (last-known values, so it
+   never looks empty), then fetches ./data.json and overrides the volatile
+   fields (num / chg / dir / asOf / q) for any metric whose `id` matches.
+   data.json is rewritten every morning by the GitHub Action (refresh.py).
+   `avg` = 2026 year-to-date AVERAGE price. "% vs avg" is computed in-page.
+   ========================================================================== */
+const METRICS = [
+  { id:"urea_fob", grp:"Fertilizer — FOB NOLA / US Gulf", name:"Urea (Granular) — FOB US Gulf", unit:"USD / short ton · CME (Sep)", sym:"$", num:"443.00", avg:"390", chg:"flat d/d", dir:"flat", asOf:"Sep 8", q:"lagged",
+    src:"Barchart (CME JCU26)", url:"https://www.barchart.com/futures/quotes/JC*1",
+    note:"CME Urea FOB US Gulf futures (JCU26). No free live API — topped up periodically; check Barchart for the current print. YTD avg estimated." },
+  { id:"dap_fob", grp:"Fertilizer — FOB NOLA / US Gulf", name:"DAP — FOB NOLA", unit:"USD / short ton · CME (Sep)", sym:"$", num:"792.50", avg:"660", chg:"flat d/d", dir:"flat", asOf:"Sep 8", q:"lagged",
+    src:"CME via farmbucks", url:"https://farmbucks.com/futures/fertilizer", note:"CME DAP FOB NOLA futures print. No free live API — topped up periodically. YTD avg estimated from 2026 NOLA barge range." },
+  { id:"map_fob", grp:"Fertilizer — FOB NOLA / US Gulf", name:"MAP — FOB NOLA", unit:"USD / short ton · barge", sym:"$", num:"775", avg:"680", chg:"firming", dir:"up", asOf:"Jul 20", q:"lagged",
+    src:"Advanced Turf (barge)", url:"https://www.advancedturf.com/wp-content/uploads/2026/07/ATS-Fertilizer-Market-Update-7_20_2026.pdf",
+    note:"No CME MAP contract; NOLA barge dealer print. YTD avg estimated." },
+  { id:"uan_fob", grp:"Fertilizer — FOB NOLA / US Gulf", name:"UAN (32%) — FOB NOLA", unit:"USD / short ton · CME", sym:"$", num:"500.00", avg:null, chg:"no recent trades", dir:"na", asOf:"stale", q:"proxy",
+    src:"CME (barely traded)", url:"https://www.barchart.com/futures/quotes/UFV*1",
+    note:"CME UAN FOB NOLA is a barely-traded contract — last print with no recent trades, indicative only. No YTD average shown. Verify on Barchart/CME." },
+  { id:"potash_fob", grp:"Fertilizer — FOB NOLA / US Gulf", name:"Potash (MOP) — FOB NOLA", unit:"USD / short ton · barge", sym:"$", num:"340", avg:"375", chg:"stable", dir:"flat", asOf:"Jul 20", q:"lagged",
+    src:"Advanced Turf (barge)", url:"https://www.advancedturf.com/wp-content/uploads/2026/07/ATS-Fertilizer-Market-Update-7_20_2026.pdf",
+    note:"Potash is usually warehouse-quoted, not NOLA barge. YTD avg estimated." },
+
+  { id:"urea_retail", grp:"Fertilizer — US Retail", name:"Urea — US retail avg", unit:"USD / short ton", sym:"$", num:"655", avg:"635", chg:"lower w/w", dir:"down", asOf:"wk Aug 28", q:"proxy",
+    src:"DTN Progressive Farmer", url:"https://www.dtnpf.com/agriculture/web/ag/crops/article/2026/09/02/fertilizer-prices-fall-uan28-urea", note:"DTN US retail average. Weekly print. YTD avg estimated." },
+  { id:"dap_retail", grp:"Fertilizer — US Retail", name:"DAP — US retail avg", unit:"USD / short ton", sym:"$", num:"918", avg:"885", chg:"+ w/w", dir:"up", asOf:"wk Aug 28", q:"proxy",
+    src:"DTN Progressive Farmer", url:"https://www.dtnpf.com/agriculture/web/ag/crops/article/2026/09/02/fertilizer-prices-fall-uan28-urea", note:"DTN US retail average. Weekly print. YTD avg estimated." },
+  { id:"map_retail", grp:"Fertilizer — US Retail", name:"MAP — US retail avg", unit:"USD / short ton", sym:"$", num:"959", avg:"915", chg:"flat w/w", dir:"flat", asOf:"wk Aug 28", q:"proxy",
+    src:"DTN Progressive Farmer", url:"https://www.dtnpf.com/agriculture/web/ag/crops/article/2026/09/02/fertilizer-prices-fall-uan28-urea", note:"DTN US retail average. Weekly print. YTD avg estimated." },
+  { id:"potash_retail", grp:"Fertilizer — US Retail", name:"Potash (MOP) — US retail", unit:"USD / short ton", sym:"$", num:"493", avg:"490", chg:"lower w/w", dir:"down", asOf:"wk Aug 28", q:"proxy",
+    src:"DTN Progressive Farmer", url:"https://www.dtnpf.com/agriculture/web/ag/crops/article/2026/09/02/fertilizer-prices-fall-uan28-urea", note:"DTN US retail average. Weekly print. YTD avg estimated." },
+
+  { id:"natgas", grp:"Inputs & Chemicals", name:"Natural Gas — Henry Hub", unit:"USD / MMBtu · NYMEX", sym:"$", num:"2.87", avg:"3.60", chg:"—", dir:"flat", asOf:"Sep 9", q:"live",
+    src:"NYMEX (Yahoo Finance)", url:"https://finance.yahoo.com/quote/NG=F", note:"NYMEX Henry Hub front-month futures. Key feedstock for urea / ammonia. Auto-refreshed daily. YTD avg measured." },
+  { id:"sulfuric", grp:"Inputs & Chemicals", name:"Sulfuric Acid — N. America", unit:"USD / metric ton", sym:"$", num:"161", avg:"160", chg:"−1.4% m/m", dir:"down", asOf:"Aug 2026", q:"lagged",
+    src:"BusinessAnalytiq", url:"https://businessanalytiq.com/procurementanalytics/index/sulfuric-acid-price-index/",
+    note:"North America monthly index. No free live feed — topped up monthly. YTD avg estimated (range-bound)." },
+
+  { id:"copper_comex", grp:"Metals", name:"Copper — COMEX", unit:"USD / lb", sym:"$", num:"6.76", avg:"6.15", chg:"—", dir:"flat", asOf:"Sep 9", q:"live",
+    src:"COMEX (Yahoo Finance)", url:"https://finance.yahoo.com/quote/HG=F", note:"Live COMEX copper front-month futures, auto-refreshed daily. YTD avg derived from Westmetall / FRED LME 2026 series." },
+  { id:"copper_lme", grp:"Metals", name:"Copper — LME", unit:"USD / tonne", sym:"$", num:"14,737", avg:"13,300", chg:"weekly", dir:"flat", asOf:"Sep 8", q:"lagged",
+    src:"Westmetall (LME cash)", url:"https://www.westmetall.com/en/markdaten.php?action=table&field=LME_Cu_cash", note:"LME copper cash settlement (same metal as COMEX, per tonne). No free API — topped up periodically; tracks COMEX. YTD avg from Westmetall 2026 series." },
+  { id:"zinc_lme", grp:"Metals", name:"Zinc — LME", unit:"USD / tonne", sym:"$", num:"4,053", avg:"3,430", chg:"weekly", dir:"flat", asOf:"Sep 9", q:"lagged",
+    src:"Westmetall (LME cash)", url:"https://www.westmetall.com/en/markdaten.php?action=table&field=LME_Zn_cash", note:"LME zinc cash. No free live API — topped up periodically. YTD avg from Westmetall / FRED 2026 series." },
+  { id:"manganese", grp:"Metals", name:"Manganese Ore — 46% CIF Tianjin", unit:"USD / dmtu", sym:"$", num:"6.02", avg:"6.15", chg:"steady", dir:"flat", asOf:"Sep 4", q:"lagged",
+    src:"Critical Minerals News", url:"https://critical-minerals-news.com/manganese-price/",
+    note:"High-grade CIF China benchmark; fresher prints are subscription-only. Topped up periodically. YTD avg is a ballpark." },
+
+  { id:"drewry_wci", grp:"Ocean Freight & Logistics", name:"Drewry WCI — Composite", unit:"USD / 40ft container", sym:"$", num:"4,465", avg:"3,400", chg:"weekly", dir:"flat", asOf:"Sep 3", q:"lagged",
+    src:"Drewry (via DCN)", url:"https://www.thedcn.com.au/news/world-container-index-27-august-2026", note:"Weekly index; no free live API. Topped up weekly. YTD avg estimated." },
+  { id:"sha_lax", grp:"Ocean Freight & Logistics", name:"Shanghai → Los Angeles", unit:"USD / 40ft container", sym:"$", num:"7,185", avg:"4,700", chg:"weekly", dir:"flat", asOf:"Sep 3", q:"lagged",
+    src:"Drewry (via DCN)", url:"https://www.thedcn.com.au/news/world-container-index-27-august-2026", note:"Weekly Drewry lane. Topped up weekly. YTD avg estimated." },
+  { id:"sha_nyc", grp:"Ocean Freight & Logistics", name:"Shanghai → New York", unit:"USD / 40ft container", sym:"$", num:"9,587", avg:"6,200", chg:"weekly", dir:"flat", asOf:"Sep 3", q:"lagged",
+    src:"Drewry (via DCN)", url:"https://www.thedcn.com.au/news/world-container-index-27-august-2026", note:"Weekly Drewry lane. Topped up weekly. YTD avg estimated." },
+  { id:"baltic", grp:"Ocean Freight & Logistics", name:"Baltic Dry Index", unit:"index points", sym:"", num:"3,584", avg:"1,850", chg:"—", dir:"flat", asOf:"Sep 8", q:"lagged",
+    src:"HandyBulk", url:"https://www.handybulk.com/baltic-dry-index/", note:"Dry-bulk shipping gauge. Auto-refreshed when the feed carries it, else topped up. YTD avg estimated." },
+  { id:"bunker", grp:"Ocean Freight & Logistics", name:"Bunker Fuel — VLSFO", unit:"USD / tonne · global avg", sym:"$", num:"873.50", avg:"665", chg:"weekly", dir:"flat", asOf:"Sep 7", q:"lagged",
+    src:"Ship & Bunker", url:"https://shipandbunker.com/prices/av/global/av-glb-global-average-bunker-price", note:"Global average VLSFO. No free API — topped up. YTD avg estimated." },
+  { id:"panama", grp:"Ocean Freight & Logistics", name:"Panama Canal — Neopanamax draft", unit:"max draft (TFW)", sym:"", num:"48.0", avg:null, chg:"cut postponed", dir:"up", asOf:"Sep 8", q:"lagged", isStatus:true,
+    src:"Panama Canal Auth.", url:"https://pancanal.com/en/panama-canal-announces-new-draft-adjustments-for-neopanamax-locks",
+    note:"48.0 ft — the planned reduction to 47.5 ft was postponed as Gatún Lake levels held. Watch for renewed cuts if drought resumes." },
+
+  { id:"eurusd", grp:"Currencies", name:"EUR / USD", unit:"US dollars per euro", sym:"", num:"1.1624", avg:"1.163", chg:"—", dir:"flat", asOf:"Sep 10", q:"live",
+    src:"FX (Yahoo Finance)", url:"https://finance.yahoo.com/quote/EURUSD=X", note:"Auto-refreshed daily. YTD avg measured (avg of 2026 monthly averages)." },
+  { id:"usdmxn", grp:"Currencies", name:"USD / MXN", unit:"pesos per US dollar", sym:"", num:"16.92", avg:"17.43", chg:"—", dir:"flat", asOf:"Sep 10", q:"live",
+    src:"FX (Yahoo Finance)", url:"https://finance.yahoo.com/quote/MXN=X", note:"Auto-refreshed daily. Peso vs its 2026 average (lower = stronger peso)." },
+  { id:"usdcny", grp:"Currencies", name:"USD / CNY", unit:"yuan per US dollar", sym:"", num:"6.7070", avg:"6.95", chg:"—", dir:"flat", asOf:"Sep 10", q:"live",
+    src:"FX (Yahoo Finance)", url:"https://finance.yahoo.com/quote/CNY=X", note:"Auto-refreshed daily. Yuan has strengthened through 2026." },
+
+  { id:"milk", grp:"Agriculture · Dairy · Feed", name:"Class III Milk", unit:"USD / cwt · CME", sym:"$", num:"16.15", avg:"15.85", chg:"—", dir:"flat", asOf:"Sep 9", q:"live",
+    src:"CME (Yahoo Finance)", url:"https://finance.yahoo.com/quote/DC=F", note:"Auto-refreshed daily. YTD avg measured." },
+  { id:"corn", grp:"Agriculture · Dairy · Feed", name:"Corn", unit:"USD / bushel · CBOT", sym:"$", num:"5.08", avg:"4.65", chg:"—", dir:"flat", asOf:"Sep 9", q:"live",
+    src:"CBOT (Yahoo Finance)", url:"https://finance.yahoo.com/quote/ZC=F", note:"Auto-refreshed daily. YTD avg estimated." },
+  { id:"soy", grp:"Agriculture · Dairy · Feed", name:"Soybeans", unit:"USD / bushel · CBOT", sym:"$", num:"12.91", avg:"11.20", chg:"—", dir:"flat", asOf:"Sep 9", q:"live",
+    src:"CBOT (Yahoo Finance)", url:"https://finance.yahoo.com/quote/ZS=F", note:"Auto-refreshed daily. YTD avg estimated." },
+  { id:"wheat", grp:"Agriculture · Dairy · Feed", name:"Wheat", unit:"USD / bushel · Chicago", sym:"$", num:"7.19", avg:"6.10", chg:"—", dir:"flat", asOf:"Sep 9", q:"live",
+    src:"CBOT (Yahoo Finance)", url:"https://finance.yahoo.com/quote/ZW=F", note:"Auto-refreshed daily. YTD avg estimated." },
+  { id:"live_cattle", grp:"Agriculture · Dairy · Feed", name:"Live Cattle", unit:"USD / cwt · CME", sym:"$", num:"216.00", avg:"218", chg:"—", dir:"flat", asOf:"Sep 9", q:"live",
+    src:"CME (Yahoo Finance)", url:"https://finance.yahoo.com/quote/LE=F", note:"Feed-demand indicator. Auto-refreshed daily. YTD avg estimated." },
+  { id:"feeder_cattle", grp:"Agriculture · Dairy · Feed", name:"Feeder Cattle", unit:"USD / cwt · CME", sym:"$", num:"327.00", avg:"315", chg:"—", dir:"flat", asOf:"Sep 9", q:"live",
+    src:"CME (Yahoo Finance)", url:"https://finance.yahoo.com/quote/GF=F", note:"Feed-demand indicator. Auto-refreshed daily. YTD avg estimated." },
+];
+
+const GROUPS = ["Fertilizer — FOB NOLA / US Gulf","Fertilizer — US Retail","Inputs & Chemicals","Metals","Ocean Freight & Logistics","Currencies","Agriculture · Dairy · Feed"];
+const arrow = {
+  up:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M6 11l6-6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  down:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M6 13l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  flat:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14" stroke-linecap="round"/></svg>', na:'' };
+const esc = s => (s==null?"":String(s)).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const toNum = s => parseFloat(String(s).replace(/,/g,''));
+
+function ytdBlock(m){
+  if(m.isStatus || m.avg==null){
+    return `<div class="ytd"><span class="lab">Avg<br>YTD</span><span class="val" data-d="na">—</span></div>`;
+  }
+  const cur = toNum(m.num), avg = toNum(m.avg), pct = (cur - avg) / avg * 100;
+  const d = Math.abs(pct) < 0.05 ? "flat" : (pct > 0 ? "up" : "down");
+  const sign = pct > 0 ? "+" : (pct < 0 ? "−" : "");
+  return `<div class="ytd">
+    <span class="lab">Avg<br>YTD</span>
+    <span class="aval">${m.sym?esc(m.sym):''}${esc(m.avg)}</span>
+    <span class="val" data-d="${d}">${sign}${Math.abs(pct).toFixed(1)}% vs avg</span>
+  </div>`;
+}
+
+function tile(m){
+  const chg = m.chg ? `<span class="chg" data-d="${m.dir}">${arrow[m.dir]||''}${esc(m.chg)}</span>` : '';
+  const valRow = m.isStatus
+    ? `<div class="t-val"><span class="num">${esc(m.num)}</span><span class="cur">ft</span>${chg}</div>`
+    : `<div class="t-val">${m.sym?`<span class="cur">${esc(m.sym)}</span>`:''}<span class="num">${esc(m.num)}</span>${chg}</div>`;
+  const note = m.note ? `<div class="t-note">${esc(m.note)}</div>` : '';
+  return `<article class="tile" data-q="${m.q}" data-name="${esc((m.name+' '+m.grp).toLowerCase())}">
+    <div class="t-top">
+      <div><div class="t-name">${esc(m.name)}</div><div class="t-unit">${esc(m.unit)}</div></div>
+      <span class="qflag" data-q="${m.q}">${m.q}</span>
+    </div>
+    <div class="t-lab">Live price</div>
+    ${valRow}
+    ${ytdBlock(m)}
+    ${note}
+    <div class="t-foot">
+      <a class="t-src" href="${esc(m.url)}" target="_blank" rel="noopener">${esc(m.src)} ↗</a>
+      <span class="t-as">${esc(m.asOf)}</span>
+    </div>
+  </article>`;
+}
+
+function render(){
+  const board = document.getElementById('board');
+  board.innerHTML = GROUPS.map((g,i)=>{
+    const items = METRICS.filter(m=>m.grp===g);
+    return `<section class="grp" data-grp="${esc(g)}">
+      <div class="grp-head"><span class="idx">${String(i+1).padStart(2,'0')}</span><h2>${esc(g)}</h2><span class="ln"></span><span class="cnt">${items.length}</span></div>
+      <div class="grid">${items.map(tile).join('')}</div>
+    </section>`;
+  }).join('');
+  applyFilter();
+}
+
+let qFilter = new Set();
+function applyFilter(){
+  const term = document.getElementById('search').value.trim().toLowerCase();
+  let shown = 0;
+  document.querySelectorAll('.tile').forEach(t=>{
+    const okQ = qFilter.size===0 || qFilter.has(t.dataset.q);
+    const okT = !term || t.dataset.name.includes(term);
+    const vis = okQ && okT; t.hidden = !vis; if(vis) shown++;
+  });
+  document.querySelectorAll('.grp').forEach(s=>{
+    s.hidden = ![...s.querySelectorAll('.tile')].some(t=>!t.hidden);
+  });
+  document.getElementById('empty').style.display = shown ? 'none' : 'block';
+}
+
+/* ---- live data load ------------------------------------------------------ */
+function stampFrom(gen){
+  const dot = document.getElementById('livedot');
+  const stamp = document.getElementById('stamp');
+  if(!gen){ stamp.textContent = "Showing last-saved values"; dot.classList.remove('on'); dot.style.background = "var(--lagged)"; return; }
+  const d = new Date(gen);
+  const opts = { weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit' };
+  stamp.textContent = "Live data · updated " + d.toLocaleString(undefined, opts);
+  dot.classList.add('on'); dot.style.background = "var(--up)";
+}
+
+async function loadData(){
+  try {
+    const res = await fetch('./data.json?t=' + Date.now(), { cache:'no-store' });
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const data = await res.json();
+    const by = {}; METRICS.forEach(m=>by[m.id]=m);
+    Object.entries(data.metrics || {}).forEach(([id, v])=>{
+      const m = by[id]; if(!m) return;
+      ['num','chg','dir','asOf','q','avg'].forEach(k=>{ if(v[k]!==undefined && v[k]!==null) m[k]=v[k]; });
+    });
+    render();
+    stampFrom(data.generated);
+  } catch(e) {
+    render();
+    stampFrom(null);
+    document.getElementById('cad').textContent = "Couldn't reach the live feed — showing last-saved values.";
+  }
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  render();                     // instant paint from embedded defaults
+  loadData();                   // then override with live data.json
+  document.getElementById('search').addEventListener('input', applyFilter);
+  document.getElementById('qchips').addEventListener('click', e=>{
+    const b = e.target.closest('.chip'); if(!b) return;
+    const q = b.dataset.q, on = b.getAttribute('aria-pressed')==='true';
+    b.setAttribute('aria-pressed', String(!on));
+    on ? qFilter.delete(q) : qFilter.add(q);
+    applyFilter();
+  });
+  const rb = document.getElementById('refreshBtn');
+  rb.addEventListener('click', ()=>{ rb.classList.add('spin'); loadData().finally(()=>setTimeout(()=>rb.classList.remove('spin'), 400)); });
+  document.getElementById('themeBtn').addEventListener('click', ()=>{
+    const cur = document.documentElement.getAttribute('data-theme');
+    const next = cur==='dark' ? 'light' : (cur==='light' ? 'dark' : (matchMedia('(prefers-color-scheme: dark)').matches ? 'light' : 'dark'));
+    document.documentElement.setAttribute('data-theme', next);
+  });
+});
+</script>
+</body>
+</html>
