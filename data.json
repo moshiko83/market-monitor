@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-14T14:47:39+00:00",
+  "generated": "2026-09-14T14:53:52+00:00",
   "metrics": {
     "urea_fob": {
       "num": "450.75",
@@ -9,11 +9,11 @@
       "q": "live"
     },
     "dap_fob": {
-      "num": "792.50",
+      "num": "802.50",
       "chg": "flat d/d",
       "dir": "flat",
-      "asOf": "Sep 8",
-      "q": "lagged"
+      "asOf": "Sep 14",
+      "q": "live"
     },
     "map_fob": {
       "num": "775",
@@ -149,14 +149,14 @@
       "q": "lagged"
     },
     "eurusd": {
-      "num": "1.1545",
+      "num": "1.1541",
       "chg": "flat d/d",
       "dir": "flat",
       "asOf": "Sep 14",
       "q": "live"
     },
     "usdmxn": {
-      "num": "17.12",
+      "num": "17.14",
       "chg": "flat d/d",
       "dir": "flat",
       "asOf": "Sep 14",
@@ -170,42 +170,42 @@
       "q": "live"
     },
     "milk": {
-      "num": "15.98",
+      "num": "15.99",
       "chg": "flat d/d",
       "dir": "flat",
       "asOf": "Sep 14",
       "q": "live"
     },
     "corn": {
-      "num": "5.34",
+      "num": "5.35",
       "chg": "+4.8% d/d",
       "dir": "up",
       "asOf": "Sep 14",
       "q": "live"
     },
     "soy": {
-      "num": "13.05",
+      "num": "13.06",
       "chg": "+2.0% d/d",
       "dir": "up",
       "asOf": "Sep 14",
       "q": "live"
     },
     "wheat": {
-      "num": "7.32",
-      "chg": "+3.5% d/d",
+      "num": "7.29",
+      "chg": "+3.2% d/d",
       "dir": "up",
       "asOf": "Sep 14",
       "q": "live"
     },
     "live_cattle": {
-      "num": "222.85",
+      "num": "222.97",
       "chg": "flat d/d",
       "dir": "flat",
       "asOf": "Sep 14",
       "q": "live"
     },
     "feeder_cattle": {
-      "num": "329.98",
+      "num": "330.35",
       "chg": "flat d/d",
       "dir": "flat",
       "asOf": "Sep 14",
