@@ -222,7 +222,7 @@
 
   <footer>
     <p><b>How to read this.</b> Each tile shows the latest public <b>price</b> (large) with its short-term move, and below it the <b>2026 year-to-date average price</b> plus how far the current price sits above or below that average (<b>% vs avg</b>) — so you can see at a glance whether today's level is rich or cheap versus the year's running average. The colored spine and flag mark data quality: <b>Live</b> figures auto-refresh each morning; <b>Proxy</b> figures stand in for benchmarks behind paid services (Argus, ICIS, Fastmarkets, Fertecon) and are directional.</p>
-    <p style="margin-top:10px"><b>What updates automatically.</b> The <b>Live</b> tiles — natural gas, COMEX copper, the grains &amp; cattle, Class III milk, and the FX pairs — are pulled fresh every morning by an automated job from a public futures feed, with no one having to touch it. The <b>Lagged</b> and <b>Proxy</b> tiles — the Gulf/NOLA and retail fertilizer benchmarks, LME metals, sulfuric acid, manganese, freight indices and the Panama draft — have no free live feed, so they carry the most recent published print and are topped up periodically. Their as-of date is shown on each tile.</p>
+    <p style="margin-top:10px"><b>What updates automatically.</b> The <b>Live</b> tiles — natural gas, COMEX copper, the grains &amp; cattle, Class III milk, the FX pairs, and the <b>Urea &amp; DAP FOB</b> CME swaps — are pulled fresh every morning by an automated job (Yahoo Finance for the futures &amp; FX, farmbucks for the two fertilizer swaps), with no one having to touch it. The <b>Lagged</b> and <b>Proxy</b> tiles — MAP, potash &amp; UAN FOB and the retail fertilizer averages (no exchange contract exists for MAP or potash, and UAN barely trades), LME metals, sulfuric acid, manganese, freight indices and the Panama draft — have no free daily feed, so they carry the most recent published print and are topped up periodically. Their as-of date is shown on each tile.</p>
     <p style="margin-top:10px"><b>On the AVG YTD figure.</b> The average is the 2026 year-to-date average price. It is measured where a free daily/monthly 2026 history exists (FX, natural gas, milk, metals) and estimated where the full history is paywalled (freight, grains, cattle, Gulf/NOLA fertilizer) — treat the % vs avg there as directional. UAN shows no average (barely-traded contract).</p>
     <p style="margin-top:10px"><b>Refresh</b> re-fetches the latest published <code>data.json</code> — the Live tiles reflect whatever the morning job last wrote. Built for the TwinsBridge team · Public market data · Not investment advice. Verify against your own feeds before trading decisions.</p>
   </footer>
@@ -238,11 +238,11 @@
    `avg` = 2026 year-to-date AVERAGE price. "% vs avg" is computed in-page.
    ========================================================================== */
 const METRICS = [
-  { id:"urea_fob", grp:"Fertilizer — FOB NOLA / US Gulf", name:"Urea (Granular) — FOB US Gulf", unit:"USD / short ton · CME (Sep)", sym:"$", num:"443.00", avg:"390", chg:"flat d/d", dir:"flat", asOf:"Sep 8", q:"lagged",
-    src:"Barchart (CME JCU26)", url:"https://www.barchart.com/futures/quotes/JC*1",
-    note:"CME Urea FOB US Gulf futures (JCU26). No free live API — topped up periodically; check Barchart for the current print. YTD avg estimated." },
-  { id:"dap_fob", grp:"Fertilizer — FOB NOLA / US Gulf", name:"DAP — FOB NOLA", unit:"USD / short ton · CME (Sep)", sym:"$", num:"792.50", avg:"660", chg:"flat d/d", dir:"flat", asOf:"Sep 8", q:"lagged",
-    src:"CME via farmbucks", url:"https://farmbucks.com/futures/fertilizer", note:"CME DAP FOB NOLA futures print. No free live API — topped up periodically. YTD avg estimated from 2026 NOLA barge range." },
+  { id:"urea_fob", grp:"Fertilizer — FOB NOLA / US Gulf", name:"Urea (Granular) — FOB US Gulf", unit:"USD / short ton · CME", sym:"$", num:"443.00", avg:"390", chg:"flat d/d", dir:"flat", asOf:"Sep 8", q:"live",
+    src:"CME via farmbucks", url:"https://farmbucks.com/futures/fertilizer",
+    note:"CME Urea (Granular) FOB US Gulf swap (UFV), front month. Auto-refreshed daily from farmbucks. YTD avg estimated." },
+  { id:"dap_fob", grp:"Fertilizer — FOB NOLA / US Gulf", name:"DAP — FOB NOLA", unit:"USD / short ton · CME", sym:"$", num:"792.50", avg:"660", chg:"flat d/d", dir:"flat", asOf:"Sep 8", q:"live",
+    src:"CME via farmbucks", url:"https://farmbucks.com/futures/fertilizer", note:"CME DAP FOB NOLA swap (DFN), front month. Auto-refreshed daily from farmbucks. YTD avg estimated from 2026 NOLA barge range." },
   { id:"map_fob", grp:"Fertilizer — FOB NOLA / US Gulf", name:"MAP — FOB NOLA", unit:"USD / short ton · barge", sym:"$", num:"775", avg:"680", chg:"firming", dir:"up", asOf:"Jul 20", q:"lagged",
     src:"Advanced Turf (barge)", url:"https://www.advancedturf.com/wp-content/uploads/2026/07/ATS-Fertilizer-Market-Update-7_20_2026.pdf",
     note:"No CME MAP contract; NOLA barge dealer print. YTD avg estimated." },
