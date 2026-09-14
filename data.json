@@ -86,10 +86,10 @@
       "q": "live"
     },
     "copper_lme": {
-      "num": "14,737",
-      "chg": "weekly",
-      "dir": "flat",
-      "asOf": "Sep 8",
+      "num": "13,973",
+      "chg": "−1.8%",
+      "dir": "down",
+      "asOf": "Sep 14",
       "q": "lagged"
     },
     "zinc_lme": {
