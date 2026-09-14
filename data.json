@@ -86,17 +86,17 @@
       "q": "live"
     },
     "copper_lme": {
-      "num": "13,973",
-      "chg": "−1.8%",
-      "dir": "down",
+      "num": "14,001",
+      "chg": "cash 13,915",
+      "dir": "flat",
       "asOf": "Sep 14",
       "q": "lagged"
     },
     "zinc_lme": {
-      "num": "4,053",
-      "chg": "weekly",
+      "num": "3,794",
+      "chg": "cash 3,932",
       "dir": "flat",
-      "asOf": "Sep 9",
+      "asOf": "Sep 14",
       "q": "lagged"
     },
     "manganese": {
