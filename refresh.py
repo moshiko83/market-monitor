@@ -167,6 +167,53 @@ def refresh_fertilizer(metrics):
     return ok
 
 
+# ---- MAP FOB NOLA (USDA official monthly Gulf/NOLA barge) ------------------
+# There is no CME MAP swap and no *free weekly* NOLA barge print (the weekly
+# authority, Bloomberg Green Markets, is paywalled). USDA's Grain Transportation
+# Report publishes an official monthly U.S. Gulf/NOLA barge MAP price through the
+# ag-transport Socrata API — government-sourced, free, and auto-refreshable. It
+# lags ~2 months, which the tile's as-of date makes explicit.
+USDA_MAP = ("https://agtransport.usda.gov/resource/8bgf-5mdv.json"
+            "?commodity=MAP&region=U.S.%20Gulf%20NOLA&$order=date%20DESC&$limit=2")
+
+
+def refresh_map_usda(metrics):
+    try:
+        req = urllib.request.Request(USDA_MAP, headers=UA)
+        rows = json.loads(
+            urllib.request.urlopen(req, timeout=25).read().decode("utf-8", "replace"))
+    except Exception as e:
+        print(f"  ! USDA MAP fetch FAILED ({e}) — keeping previous", file=sys.stderr)
+        return 0
+    if not rows:
+        print("  ! USDA MAP returned no rows — keeping previous", file=sys.stderr)
+        return 0
+    try:
+        latest = float(rows[0]["price"])
+        prev = float(rows[1]["price"]) if len(rows) > 1 else None
+        as_of = datetime.strptime(rows[0]["date"][:7], "%Y-%m").strftime("%b %Y")
+        chg, direction = "flat", "flat"
+        if prev:
+            pct = (latest - prev) / prev * 100.0
+            if abs(pct) < 0.05:
+                chg, direction = "flat m/m", "flat"
+            else:
+                sign = "+" if pct > 0 else "−"          # U+2212 minus
+                direction = "up" if pct > 0 else "down"
+                chg = f"{sign}{abs(pct):.1f}% m/m"
+        entry = metrics.setdefault("map_fob", {})
+        entry["num"] = f"{latest:,.0f}"
+        entry["chg"] = chg
+        entry["dir"] = direction
+        entry["asOf"] = as_of
+        entry["q"] = "lagged"
+        print(f"  ✓ map_fob        USDA NOLA  -> {entry['num']:>12}  {chg}  ({as_of})")
+        return 1
+    except Exception as e:
+        print(f"  ! USDA MAP parse error ({e}) — keeping previous", file=sys.stderr)
+        return 0
+
+
 def main():
     data = {"generated": None, "metrics": {}}
     if os.path.exists(DATA):
@@ -192,12 +239,15 @@ def main():
     print("Refreshing fertilizer FOB (Urea, DAP) from farmbucks...")
     fok = refresh_fertilizer(metrics)
 
+    print("Refreshing MAP FOB NOLA (USDA official monthly Gulf/NOLA)...")
+    mok = refresh_map_usda(metrics)
+
     data["generated"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
     with open(DATA, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
         f.write("\n")
 
-    print(f"\nDone. {ok}/{len(LIVE)} Yahoo + {fok}/{len(FERT)} farmbucks metrics refreshed. Wrote {DATA}")
+    print(f"\nDone. {ok}/{len(LIVE)} Yahoo + {fok}/{len(FERT)} farmbucks + {mok}/1 USDA-MAP metrics refreshed. Wrote {DATA}")
     # Never exit non-zero for partial failures — a stale tile beats a broken run.
     return 0
 
