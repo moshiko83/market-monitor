@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-15T11:41:30+00:00",
+  "generated": "2026-09-15T19:23:20+00:00",
   "metrics": {
     "urea_fob": {
       "num": "453.00",
@@ -65,7 +65,7 @@
       "q": "proxy"
     },
     "natgas": {
-      "num": "2.89",
+      "num": "2.92",
       "chg": "flat d/d",
       "dir": "flat",
       "asOf": "Sep 15",
@@ -79,7 +79,7 @@
       "q": "lagged"
     },
     "copper_comex": {
-      "num": "6.41",
+      "num": "6.46",
       "chg": "flat d/d",
       "dir": "flat",
       "asOf": "Sep 15",
@@ -149,66 +149,66 @@
       "q": "lagged"
     },
     "eurusd": {
-      "num": "1.1545",
+      "num": "1.1543",
       "chg": "flat d/d",
       "dir": "flat",
       "asOf": "Sep 15",
       "q": "live"
     },
     "usdmxn": {
-      "num": "17.14",
+      "num": "17.15",
       "chg": "flat d/d",
       "dir": "flat",
       "asOf": "Sep 15",
       "q": "live"
     },
     "usdcny": {
-      "num": "6.6999",
+      "num": "6.7007",
       "chg": "flat d/d",
       "dir": "flat",
       "asOf": "Sep 15",
       "q": "live"
     },
     "milk": {
-      "num": "15.84",
+      "num": "15.93",
       "chg": "flat d/d",
       "dir": "flat",
       "asOf": "Sep 15",
       "q": "live"
     },
     "corn": {
-      "num": "5.30",
-      "chg": "+3.5% d/d",
+      "num": "5.36",
+      "chg": "+4.6% d/d",
       "dir": "up",
       "asOf": "Sep 15",
       "q": "live"
     },
     "soy": {
-      "num": "12.99",
-      "chg": "+1.1% d/d",
+      "num": "13.19",
+      "chg": "+2.6% d/d",
       "dir": "up",
       "asOf": "Sep 15",
       "q": "live"
     },
     "wheat": {
-      "num": "7.17",
-      "chg": "+1.4% d/d",
+      "num": "7.28",
+      "chg": "+2.9% d/d",
       "dir": "up",
       "asOf": "Sep 15",
       "q": "live"
     },
     "live_cattle": {
-      "num": "225.10",
-      "chg": "+1.3% d/d",
-      "dir": "up",
-      "asOf": "Sep 14",
+      "num": "223.20",
+      "chg": "flat d/d",
+      "dir": "flat",
+      "asOf": "Sep 15",
       "q": "live"
     },
     "feeder_cattle": {
-      "num": "333.05",
-      "chg": "−3.1% d/d",
-      "dir": "down",
-      "asOf": "Sep 14",
+      "num": "333.68",
+      "chg": "flat d/d",
+      "dir": "flat",
+      "asOf": "Sep 15",
       "q": "live"
     }
   }
