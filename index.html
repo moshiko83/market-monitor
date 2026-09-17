@@ -395,23 +395,37 @@ function stampFrom(gen){
   dot.classList.add('on'); dot.style.background = "var(--up)";
 }
 
+// Live data endpoint (Cloudflare Worker) — repulls the market-quotable tiles
+// on demand. Empty string falls back to the once-a-morning data.json only.
+const LIVE_ENDPOINT = "https://twinsbridge-monitor.meyer-ohayon.workers.dev/";
+
+function applyOverrides(metrics){
+  const by = {}; METRICS.forEach(m=>by[m.id]=m);
+  Object.entries(metrics || {}).forEach(([id, v])=>{
+    const m = by[id]; if(!m) return;
+    ['num','chg','dir','asOf','q','avg'].forEach(k=>{ if(v[k]!==undefined && v[k]!==null) m[k]=v[k]; });
+  });
+}
+
 async function loadData(){
+  let baseGen = null, gotBase = false, liveOk = false, liveGen = null;
+  // 1) committed snapshot — every tile, including the hand-kept benchmarks
   try {
     const res = await fetch('./data.json?t=' + Date.now(), { cache:'no-store' });
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const data = await res.json();
-    const by = {}; METRICS.forEach(m=>by[m.id]=m);
-    Object.entries(data.metrics || {}).forEach(([id, v])=>{
-      const m = by[id]; if(!m) return;
-      ['num','chg','dir','asOf','q','avg'].forEach(k=>{ if(v[k]!==undefined && v[k]!==null) m[k]=v[k]; });
-    });
-    render();
-    stampFrom(data.generated);
-  } catch(e) {
-    render();
-    stampFrom(null);
-    document.getElementById('cad').textContent = "Couldn't reach the live feed — showing last-saved values.";
+    if(res.ok){ const data = await res.json(); applyOverrides(data.metrics); baseGen = data.generated; gotBase = true; }
+  } catch(e) { /* fall through to live / defaults */ }
+  // 2) live overlay — repulls futures, FX and fertilizer swaps on the spot
+  if(LIVE_ENDPOINT){
+    try {
+      const lr = await fetch(LIVE_ENDPOINT + '?t=' + Date.now(), { cache:'no-store' });
+      if(lr.ok){ const ld = await lr.json(); applyOverrides(ld.metrics); liveGen = ld.generated; liveOk = true; }
+    } catch(e) { /* keep snapshot values */ }
   }
+  render();
+  const cad = document.getElementById('cad');
+  if(liveOk){ stampFrom(liveGen); cad.textContent = "Refresh pulls live prices · live price vs. 2026 average"; }
+  else if(gotBase){ stampFrom(baseGen); cad.textContent = "Live feed unreachable — showing the last saved snapshot."; }
+  else { stampFrom(null); cad.textContent = "Couldn't reach the live feed — showing last-saved values."; }
 }
 
 document.addEventListener('DOMContentLoaded', ()=>{
