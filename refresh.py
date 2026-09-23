@@ -176,9 +176,11 @@ def refresh_fertilizer(metrics):
 USDA_TMPL = ("https://agtransport.usda.gov/resource/8bgf-5mdv.json"
              "?commodity={c}&region=U.S.%20Gulf%20NOLA&$order=date%20DESC&$limit=2")
 # metric id -> USDA commodity name
+# (Potash is NOT here: the potash tile uses the World Bank MOP spot / FOB Vancouver
+# series, topped up by hand — leaving it out keeps the daily job from overwriting it
+# with the USDA Gulf/NOLA number.)
 USDA_FERT = {
-    "map_fob":    "MAP",
-    "potash_fob": "Potash",
+    "map_fob": "MAP",
 }
 
 
@@ -245,7 +247,7 @@ def main():
     print("Refreshing fertilizer FOB (Urea, DAP) from farmbucks...")
     fok = refresh_fertilizer(metrics)
 
-    print("Refreshing MAP & Potash FOB NOLA (USDA official monthly Gulf/NOLA)...")
+    print("Refreshing MAP FOB NOLA (USDA official monthly Gulf/NOLA)...")
     mok = sum(refresh_usda(metrics, mid, c) for mid, c in USDA_FERT.items())
 
     data["generated"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
