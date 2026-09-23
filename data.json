@@ -30,10 +30,10 @@
       "q": "proxy"
     },
     "potash_fob": {
-      "num": "340",
-      "chg": "stable",
-      "dir": "flat",
-      "asOf": "Jul 20",
+      "num": "342",
+      "chg": "+0.6% m/m",
+      "dir": "up",
+      "asOf": "Jun 2026",
       "q": "lagged"
     },
     "urea_retail": {
