@@ -249,9 +249,9 @@ const METRICS = [
   { id:"uan_fob", grp:"Fertilizer — FOB NOLA / US Gulf", name:"UAN (32%) — FOB NOLA", unit:"USD / short ton · CME", sym:"$", num:"500.00", avg:null, chg:"no recent trades", dir:"na", asOf:"stale", q:"proxy",
     src:"CME (barely traded)", url:"https://www.barchart.com/futures/quotes/UFV*1",
     note:"CME UAN FOB NOLA is a barely-traded contract — last print with no recent trades, indicative only. No YTD average shown. Verify on Barchart/CME." },
-  { id:"potash_fob", grp:"Fertilizer — FOB NOLA / US Gulf", name:"Potash (MOP) — FOB NOLA", unit:"USD / short ton · barge", sym:"$", num:"340", avg:"375", chg:"stable", dir:"flat", asOf:"Jul 20", q:"lagged",
-    src:"Advanced Turf (barge)", url:"https://www.advancedturf.com/wp-content/uploads/2026/07/ATS-Fertilizer-Market-Update-7_20_2026.pdf",
-    note:"Potash is usually warehouse-quoted, not NOLA barge. YTD avg estimated." },
+  { id:"potash_fob", grp:"Fertilizer — FOB NOLA / US Gulf", name:"Potash (MOP) — FOB NOLA", unit:"USD / short ton · barge", sym:"$", num:"342", avg:"318", chg:"+0.6% m/m", dir:"up", asOf:"Jun 2026", q:"lagged",
+    src:"USDA Grain Transportation Report (Gulf/NOLA barge)", url:"https://agtransport.usda.gov/Fertilizer/Fertilizer-Prices/8bgf-5mdv",
+    note:"Official U.S. Gulf/NOLA barge print from USDA's monthly Grain Transportation Report — auto-refreshed. No CME potash swap exists (CME fertilizer swaps cover only Urea, UAN & DAP), so this replaces the delayed dealer PDF; USDA lags ~2 months. YTD avg is the 2026 monthly mean." },
 
   { id:"urea_retail", grp:"Fertilizer — US Retail", name:"Urea — US retail avg", unit:"USD / short ton", sym:"$", num:"655", avg:"635", chg:"lower w/w", dir:"down", asOf:"wk Aug 28", q:"proxy",
     src:"DTN Progressive Farmer", url:"https://www.dtnpf.com/agriculture/web/ag/crops/article/2026/09/02/fertilizer-prices-fall-uan28-urea", note:"DTN US retail average. Weekly print. YTD avg estimated." },
