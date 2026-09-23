@@ -167,26 +167,32 @@ def refresh_fertilizer(metrics):
     return ok
 
 
-# ---- MAP FOB NOLA (USDA official monthly Gulf/NOLA barge) ------------------
-# There is no CME MAP swap and no *free weekly* NOLA barge print (the weekly
-# authority, Bloomberg Green Markets, is paywalled). USDA's Grain Transportation
-# Report publishes an official monthly U.S. Gulf/NOLA barge MAP price through the
-# ag-transport Socrata API — government-sourced, free, and auto-refreshable. It
-# lags ~2 months, which the tile's as-of date makes explicit.
-USDA_MAP = ("https://agtransport.usda.gov/resource/8bgf-5mdv.json"
-            "?commodity=MAP&region=U.S.%20Gulf%20NOLA&$order=date%20DESC&$limit=2")
+# ---- Fertilizer FOB NOLA (USDA official monthly Gulf/NOLA barge) -----------
+# There is no CME swap for MAP or potash, and no *free weekly* NOLA barge print
+# (the weekly authority, Bloomberg Green Markets, is paywalled). USDA's Grain
+# Transportation Report publishes an official monthly U.S. Gulf/NOLA barge price
+# for each through the ag-transport Socrata API — government-sourced, free, and
+# auto-refreshable. It lags ~2 months, which the tile's as-of date makes explicit.
+USDA_TMPL = ("https://agtransport.usda.gov/resource/8bgf-5mdv.json"
+             "?commodity={c}&region=U.S.%20Gulf%20NOLA&$order=date%20DESC&$limit=2")
+# metric id -> USDA commodity name
+USDA_FERT = {
+    "map_fob":    "MAP",
+    "potash_fob": "Potash",
+}
 
 
-def refresh_map_usda(metrics):
+def refresh_usda(metrics, mid, commodity):
+    url = USDA_TMPL.format(c=urllib.parse.quote(commodity))
     try:
-        req = urllib.request.Request(USDA_MAP, headers=UA)
+        req = urllib.request.Request(url, headers=UA)
         rows = json.loads(
             urllib.request.urlopen(req, timeout=25).read().decode("utf-8", "replace"))
     except Exception as e:
-        print(f"  ! USDA MAP fetch FAILED ({e}) — keeping previous", file=sys.stderr)
+        print(f"  ! USDA {commodity} fetch FAILED ({e}) — keeping previous", file=sys.stderr)
         return 0
     if not rows:
-        print("  ! USDA MAP returned no rows — keeping previous", file=sys.stderr)
+        print(f"  ! USDA {commodity} returned no rows — keeping previous", file=sys.stderr)
         return 0
     try:
         latest = float(rows[0]["price"])
@@ -201,16 +207,16 @@ def refresh_map_usda(metrics):
                 sign = "+" if pct > 0 else "−"          # U+2212 minus
                 direction = "up" if pct > 0 else "down"
                 chg = f"{sign}{abs(pct):.1f}% m/m"
-        entry = metrics.setdefault("map_fob", {})
+        entry = metrics.setdefault(mid, {})
         entry["num"] = f"{latest:,.0f}"
         entry["chg"] = chg
         entry["dir"] = direction
         entry["asOf"] = as_of
         entry["q"] = "lagged"
-        print(f"  ✓ map_fob        USDA NOLA  -> {entry['num']:>12}  {chg}  ({as_of})")
+        print(f"  ✓ {mid:14} USDA NOLA  -> {entry['num']:>12}  {chg}  ({as_of})")
         return 1
     except Exception as e:
-        print(f"  ! USDA MAP parse error ({e}) — keeping previous", file=sys.stderr)
+        print(f"  ! USDA {commodity} parse error ({e}) — keeping previous", file=sys.stderr)
         return 0
 
 
@@ -239,15 +245,15 @@ def main():
     print("Refreshing fertilizer FOB (Urea, DAP) from farmbucks...")
     fok = refresh_fertilizer(metrics)
 
-    print("Refreshing MAP FOB NOLA (USDA official monthly Gulf/NOLA)...")
-    mok = refresh_map_usda(metrics)
+    print("Refreshing MAP & Potash FOB NOLA (USDA official monthly Gulf/NOLA)...")
+    mok = sum(refresh_usda(metrics, mid, c) for mid, c in USDA_FERT.items())
 
     data["generated"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
     with open(DATA, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
         f.write("\n")
 
-    print(f"\nDone. {ok}/{len(LIVE)} Yahoo + {fok}/{len(FERT)} farmbucks + {mok}/1 USDA-MAP metrics refreshed. Wrote {DATA}")
+    print(f"\nDone. {ok}/{len(LIVE)} Yahoo + {fok}/{len(FERT)} farmbucks + {mok}/{len(USDA_FERT)} USDA metrics refreshed. Wrote {DATA}")
     # Never exit non-zero for partial failures — a stale tile beats a broken run.
     return 0
 
