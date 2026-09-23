@@ -249,9 +249,9 @@ const METRICS = [
   { id:"uan_fob", grp:"Fertilizer — FOB NOLA / US Gulf", name:"UAN (32%) — FOB NOLA", unit:"USD / short ton · CME", sym:"$", num:"500.00", avg:null, chg:"no recent trades", dir:"na", asOf:"stale", q:"proxy",
     src:"CME (barely traded)", url:"https://www.barchart.com/futures/quotes/UFV*1",
     note:"CME UAN FOB NOLA is a barely-traded contract — last print with no recent trades, indicative only. No YTD average shown. Verify on Barchart/CME." },
-  { id:"potash_fob", grp:"Fertilizer — FOB NOLA / US Gulf", name:"Potash (MOP) — FOB NOLA", unit:"USD / short ton · barge", sym:"$", num:"342", avg:"318", chg:"+0.6% m/m", dir:"up", asOf:"Jun 2026", q:"lagged",
-    src:"USDA Grain Transportation Report (Gulf/NOLA barge)", url:"https://agtransport.usda.gov/Fertilizer/Fertilizer-Prices/8bgf-5mdv",
-    note:"Official U.S. Gulf/NOLA barge print from USDA's monthly Grain Transportation Report — auto-refreshed. No CME potash swap exists (CME fertilizer swaps cover only Urea, UAN & DAP), so this replaces the delayed dealer PDF; USDA lags ~2 months. YTD avg is the 2026 monthly mean." },
+  { id:"potash_fob", grp:"Fertilizer — FOB NOLA / US Gulf", name:"Potash (MOP) — spot", unit:"USD / short ton", sym:"$", num:"351", avg:"353", chg:"−2.4% m/m", dir:"down", asOf:"Aug 2026", q:"lagged",
+    src:"World Bank MOP spot (via YCharts)", url:"https://ycharts.com/indicators/potassium_chloride_muriate_of_potash_spot_price",
+    note:"World Bank monthly Muriate of Potash spot — standard grade, FOB Vancouver — converted from USD/mt to USD/short ton (× 0.907). Aug 2026: $386.90/mt = $351/short ton. Monthly; topped up when World Bank publishes (no free auto-feed — YCharts is subscription-gated). YTD avg is the 2026 monthly mean." },
 
   { id:"urea_retail", grp:"Fertilizer — US Retail", name:"Urea — US retail avg", unit:"USD / short ton", sym:"$", num:"655", avg:"635", chg:"lower w/w", dir:"down", asOf:"wk Aug 28", q:"proxy",
     src:"DTN Progressive Farmer", url:"https://www.dtnpf.com/agriculture/web/ag/crops/article/2026/09/02/fertilizer-prices-fall-uan28-urea", note:"DTN US retail average. Weekly print. YTD avg estimated." },
@@ -268,8 +268,8 @@ const METRICS = [
     src:"BusinessAnalytiq", url:"https://businessanalytiq.com/procurementanalytics/index/sulfuric-acid-price-index/",
     note:"North America monthly index. No free live feed — topped up monthly. YTD avg estimated (range-bound)." },
 
-  { id:"copper_comex", grp:"Metals", name:"Copper — COMEX 3M", unit:"USD / lb", sym:"$", num:"6.36", avg:"6.15", chg:"—", dir:"flat", asOf:"Sep 9", q:"live",
-    src:"COMEX (Yahoo Finance)", url:"https://finance.yahoo.com/quote/HG=F", note:"COMEX copper active-month contract (matches Investing.com's HG quote). Auto-refreshed daily. YTD avg derived from LME 2026 series." },
+  { id:"copper_comex", grp:"Metals", name:"Copper — COMEX 3M", unit:"USD / lb", sym:"$", num:"6.36", avg:"6.15", chg:"—", dir:"flat", asOf:"Sep 9", q:"live", conv:{factor:2204.62, unit:"MT", dec:0},
+    src:"COMEX (Yahoo Finance)", url:"https://finance.yahoo.com/quote/HG=F", note:"COMEX copper active-month contract (matches Investing.com's HG quote). Auto-refreshed daily; the USD/MT figure in parentheses is the live price converted (× 2,204.62 lb/tonne). YTD avg derived from LME 2026 series." },
   { id:"copper_lme", grp:"Metals", name:"Copper — LME 3M", unit:"USD / tonne", sym:"$", num:"14,001", avg:"13,300", chg:"cash 13,915", dir:"flat", asOf:"Sep 14", q:"lagged",
     src:"investing.com (3M live) · Marex (cash)", url:"https://www.investing.com/commodities/copper?cid=959211", note:"LME copper 3-month price pulled live from investing.com on every refresh; the cash figure shown alongside comes from Marex's daily LME provisional-close email (Hal Scholl) and updates when that email arrives. YTD avg from LME 2026 series." },
   { id:"zinc_lme", grp:"Metals", name:"Zinc — LME 3M", unit:"USD / tonne", sym:"$", num:"3,794", avg:"3,430", chg:"cash 3,932", dir:"flat", asOf:"Sep 14", q:"lagged",
@@ -337,9 +337,11 @@ function ytdBlock(m){
 
 function tile(m){
   const chg = m.chg ? `<span class="chg" data-d="${m.dir}">${arrow[m.dir]||''}${esc(m.chg)}</span>` : '';
+  // optional live unit conversion shown in parentheses (e.g. USD/lb -> USD/MT)
+  const conv = m.conv ? `<span class="cur">(≈ ${m.sym||'$'}${(toNum(m.num)*m.conv.factor).toLocaleString('en-US',{maximumFractionDigits:m.conv.dec||0})} / ${m.conv.unit})</span>` : '';
   const valRow = m.isStatus
     ? `<div class="t-val"><span class="num">${esc(m.num)}</span><span class="cur">ft</span>${chg}</div>`
-    : `<div class="t-val">${m.sym?`<span class="cur">${esc(m.sym)}</span>`:''}<span class="num">${esc(m.num)}</span>${chg}</div>`;
+    : `<div class="t-val">${m.sym?`<span class="cur">${esc(m.sym)}</span>`:''}<span class="num">${esc(m.num)}</span>${conv}${chg}</div>`;
   const note = m.note ? `<div class="t-note">${esc(m.note)}</div>` : '';
   return `<article class="tile" data-q="${m.q}" data-name="${esc((m.name+' '+m.grp).toLowerCase())}">
     <div class="t-top">
