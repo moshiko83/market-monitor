@@ -86,17 +86,17 @@
       "q": "live"
     },
     "copper_lme": {
-      "num": "14,259",
-      "chg": "cash 14,312",
+      "num": "14,420",
+      "chg": "cash 14,496",
       "dir": "flat",
-      "asOf": "Oct 2",
+      "asOf": "Oct 5",
       "q": "lagged"
     },
     "zinc_lme": {
-      "num": "3,711",
-      "chg": "cash 3,772",
+      "num": "3,744",
+      "chg": "cash 3,791",
       "dir": "flat",
-      "asOf": "Oct 2",
+      "asOf": "Oct 5",
       "q": "lagged"
     },
     "manganese": {
@@ -201,14 +201,14 @@
       "num": "221.47",
       "chg": "+1.2% d/d",
       "dir": "up",
-      "asOf": "Oct 2",
+      "asOf": "Oct 5",
       "q": "live"
     },
     "feeder_cattle": {
       "num": "331.15",
       "chg": "−1.0% d/d",
       "dir": "down",
-      "asOf": "Oct 2",
+      "asOf": "Oct 5",
       "q": "live"
     }
   }
