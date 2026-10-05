@@ -274,9 +274,9 @@ const METRICS = [
     src:"investing.com (3M live) · Marex (cash)", url:"https://www.investing.com/commodities/copper?cid=959211", note:"LME copper 3-month price pulled live from investing.com on every refresh; the cash figure shown alongside comes from Marex's daily LME provisional-close email (Hal Scholl) and updates when that email arrives. YTD avg from LME 2026 series." },
   { id:"zinc_lme", grp:"Metals", name:"Zinc — LME 3M", unit:"USD / tonne", sym:"$", num:"3,794", avg:"3,430", chg:"cash 3,932", dir:"flat", asOf:"Sep 14", q:"lagged",
     src:"investing.com (3M live) · Marex (cash)", url:"https://www.investing.com/commodities/zinc-futures", note:"LME zinc 3-month price pulled live from investing.com on every refresh; the cash figure shown alongside comes from Marex's daily LME provisional-close email and updates when that email arrives. YTD avg from LME 2026 series." },
-  { id:"manganese", grp:"Metals", name:"Manganese Ore — 46% CIF Tianjin", unit:"USD / dmtu", sym:"$", num:"6.02", avg:"6.15", chg:"steady", dir:"flat", asOf:"Sep 4", q:"lagged",
-    src:"Critical Minerals News", url:"https://critical-minerals-news.com/manganese-price/",
-    note:"High-grade CIF China benchmark; fresher prints are subscription-only. Topped up periodically. YTD avg is a ballpark." },
+  { id:"manganese", grp:"Metals", name:"Manganese Ore — Australia 46% Block, Tianjin (SMM)", unit:"USD / tonne-unit", sym:"$", num:"5.98", avg:null, chg:"steady", dir:"flat", asOf:"Sep 30", q:"lagged",
+    src:"SMM / metal.com", url:"https://www.metal.com/manganese",
+    note:"SMM portside spot — Australian 46% block manganese ore at Tianjin port (series SMM-MN-MO-002), priced in USD per tonne-unit (= USD per dmtu, one 1% Mn unit per tonne). Subscription-gated on metal.com, so topped up manually when a new print lands." },
 
   { id:"drewry_wci", grp:"Ocean Freight & Logistics", name:"Drewry WCI — Composite", unit:"USD / 40ft container", sym:"$", num:"4,465", avg:"3,400", chg:"weekly", dir:"flat", asOf:"Sep 3", q:"lagged",
     src:"Drewry (via DCN)", url:"https://www.thedcn.com.au/news/world-container-index-27-august-2026", note:"Weekly index; no free live API. Topped up weekly. YTD avg estimated." },
