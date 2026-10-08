@@ -86,17 +86,17 @@
       "q": "live"
     },
     "copper_lme": {
-      "num": "14,415",
-      "chg": "cash 14,483",
+      "num": "14,309",
+      "chg": "cash 14,406",
       "dir": "flat",
-      "asOf": "Oct 6",
+      "asOf": "Oct 8",
       "q": "lagged"
     },
     "zinc_lme": {
-      "num": "3,766",
-      "chg": "cash 3,805",
+      "num": "3,719",
+      "chg": "cash 3,775",
       "dir": "flat",
-      "asOf": "Oct 6",
+      "asOf": "Oct 8",
       "q": "lagged"
     },
     "manganese": {
