@@ -1,25 +1,25 @@
 {
-  "generated": "2026-10-07T11:45:07+00:00",
+  "generated": "2026-10-08T11:45:40+00:00",
   "metrics": {
     "urea_fob": {
-      "num": "432.75",
-      "chg": "−0.46% d/d",
+      "num": "424.75",
+      "chg": "−1.85% d/d",
       "dir": "down",
-      "asOf": "Oct 7",
+      "asOf": "Oct 8",
       "q": "live"
     },
     "dap_fob": {
-      "num": "802.50",
-      "chg": "flat d/d",
-      "dir": "flat",
-      "asOf": "Oct 7",
+      "num": "800.00",
+      "chg": "−0.31% d/d",
+      "dir": "down",
+      "asOf": "Oct 8",
       "q": "live"
     },
     "map_fob": {
-      "num": "783",
-      "chg": "−0.8% m/m",
-      "dir": "down",
-      "asOf": "Jun 2026",
+      "num": "799",
+      "chg": "+2.6% m/m",
+      "dir": "up",
+      "asOf": "Sep 2026",
       "q": "lagged"
     },
     "uan_fob": {
@@ -65,10 +65,10 @@
       "q": "proxy"
     },
     "natgas": {
-      "num": "3.17",
+      "num": "3.25",
       "chg": "flat d/d",
       "dir": "flat",
-      "asOf": "Oct 7",
+      "asOf": "Oct 8",
       "q": "live"
     },
     "sulfuric": {
@@ -79,10 +79,10 @@
       "q": "lagged"
     },
     "copper_comex": {
-      "num": "6.64",
-      "chg": "flat d/d",
-      "dir": "flat",
-      "asOf": "Oct 7",
+      "num": "6.62",
+      "chg": "+0.4% d/d",
+      "dir": "up",
+      "asOf": "Oct 8",
       "q": "live"
     },
     "copper_lme": {
@@ -149,66 +149,66 @@
       "q": "lagged"
     },
     "eurusd": {
-      "num": "1.1181",
+      "num": "1.1183",
       "chg": "flat d/d",
       "dir": "flat",
-      "asOf": "Oct 7",
+      "asOf": "Oct 8",
       "q": "live"
     },
     "usdmxn": {
-      "num": "18.11",
+      "num": "18.03",
       "chg": "flat d/d",
       "dir": "flat",
-      "asOf": "Oct 7",
+      "asOf": "Oct 8",
       "q": "live"
     },
     "usdcny": {
-      "num": "6.6933",
+      "num": "6.6940",
       "chg": "flat d/d",
       "dir": "flat",
-      "asOf": "Oct 7",
+      "asOf": "Oct 8",
       "q": "live"
     },
     "milk": {
-      "num": "15.03",
+      "num": "16.26",
       "chg": "flat d/d",
       "dir": "flat",
-      "asOf": "Oct 7",
+      "asOf": "Oct 8",
       "q": "live"
     },
     "corn": {
-      "num": "5.04",
-      "chg": "−0.7% d/d",
-      "dir": "down",
-      "asOf": "Oct 7",
+      "num": "5.03",
+      "chg": "+0.1% d/d",
+      "dir": "up",
+      "asOf": "Oct 8",
       "q": "live"
     },
     "soy": {
-      "num": "13.04",
-      "chg": "+0.1% d/d",
-      "dir": "up",
-      "asOf": "Oct 7",
+      "num": "12.94",
+      "chg": "−0.3% d/d",
+      "dir": "down",
+      "asOf": "Oct 8",
       "q": "live"
     },
     "wheat": {
-      "num": "6.99",
-      "chg": "−0.7% d/d",
-      "dir": "down",
-      "asOf": "Oct 7",
+      "num": "6.88",
+      "chg": "+0.2% d/d",
+      "dir": "up",
+      "asOf": "Oct 8",
       "q": "live"
     },
     "live_cattle": {
-      "num": "224.05",
-      "chg": "+1.3% d/d",
+      "num": "223.70",
+      "chg": "+1.1% d/d",
       "dir": "up",
-      "asOf": "Oct 6",
+      "asOf": "Oct 7",
       "q": "live"
     },
     "feeder_cattle": {
-      "num": "338.25",
-      "chg": "−0.7% d/d",
+      "num": "336.05",
+      "chg": "−0.6% d/d",
       "dir": "down",
-      "asOf": "Oct 6",
+      "asOf": "Oct 7",
       "q": "live"
     }
   }
