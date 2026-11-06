@@ -264,6 +264,12 @@ const METRICS = [
 
   { id:"natgas", grp:"Inputs & Chemicals", name:"Natural Gas — Henry Hub", unit:"USD / MMBtu · NYMEX", sym:"$", num:"2.87", avg:"3.60", chg:"—", dir:"flat", asOf:"Sep 9", q:"live",
     src:"NYMEX (Yahoo Finance)", url:"https://finance.yahoo.com/quote/NG=F", note:"NYMEX Henry Hub front-month futures. Key feedstock for urea / ammonia. Auto-refreshed daily. YTD avg measured." },
+  { id:"oil_wti", grp:"Inputs & Chemicals", name:"Crude Oil — WTI", unit:"USD / barrel · NYMEX", sym:"$", num:"91.20", avg:null, chg:"+3.5% d/d", dir:"up", asOf:"Nov 5", q:"live",
+    src:"NYMEX (Yahoo Finance)", url:"https://finance.yahoo.com/quote/CL=F", note:"NYMEX WTI crude front-month futures — the US oil benchmark. Auto-refreshed daily." },
+  { id:"diesel_ulsd", grp:"Inputs & Chemicals", name:"Diesel — ULSD futures", unit:"USD / gallon · NYMEX", sym:"$", num:"4.367", avg:null, chg:"+3.8% d/d", dir:"up", asOf:"Nov 5", q:"live",
+    src:"NYMEX ULSD (Yahoo Finance)", url:"https://finance.yahoo.com/quote/HO=F", note:"NYMEX ULSD (NY Harbor) front-month futures — wholesale diesel benchmark. Auto-refreshed daily." },
+  { id:"diesel_retail", grp:"Inputs & Chemicals", name:"Diesel — US retail (on-highway)", unit:"USD / gallon", sym:"$", num:"6.352", avg:null, chg:"+1.2% w/w", dir:"up", asOf:"wk Oct 26", q:"lagged",
+    src:"EIA (weekly)", url:"https://www.eia.gov/petroleum/gasdiesel/", note:"EIA weekly US national-average on-highway diesel retail price — the trucking / fuel-surcharge reference. Weekly; topped up by hand (no free live feed wired yet). Oct 26 2026: $6.352/gal, +$0.076 w/w." },
   { id:"sulfuric", grp:"Inputs & Chemicals", name:"Sulfuric Acid — N. America", unit:"USD / metric ton", sym:"$", num:"161", avg:"160", chg:"−1.4% m/m", dir:"down", asOf:"Aug 2026", q:"lagged",
     src:"BusinessAnalytiq", url:"https://businessanalytiq.com/procurementanalytics/index/sulfuric-acid-price-index/",
     note:"North America monthly index. No free live feed — topped up monthly. YTD avg estimated (range-bound)." },
