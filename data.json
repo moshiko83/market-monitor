@@ -1,6 +1,27 @@
 {
   "generated": "2026-11-05T18:54:21+00:00",
   "metrics": {
+    "oil_wti": {
+      "num": "91.20",
+      "chg": "+3.5% d/d",
+      "dir": "up",
+      "asOf": "Nov 5",
+      "q": "live"
+    },
+    "diesel_ulsd": {
+      "num": "4.367",
+      "chg": "+3.8% d/d",
+      "dir": "up",
+      "asOf": "Nov 5",
+      "q": "live"
+    },
+    "diesel_retail": {
+      "num": "6.352",
+      "chg": "+1.2% w/w",
+      "dir": "up",
+      "asOf": "wk Oct 26",
+      "q": "lagged"
+    },
     "urea_fob": {
       "num": "426.25",
       "chg": "−1.04% d/d",
