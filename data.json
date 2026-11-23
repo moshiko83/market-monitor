@@ -122,18 +122,18 @@
       "avg": "6.18"
     },
     "copper_lme": {
-      "num": "12,522",
-      "chg": "settle 12,231",
-      "dir": "up",
+      "num": "12,490",
+      "chg": "cash 12,484",
+      "dir": "flat",
       "asOf": "Nov 23",
-      "q": "live"
+      "q": "lagged"
     },
     "zinc_lme": {
-      "num": "3,559",
-      "chg": "settle 3,670",
-      "dir": "up",
+      "num": "3,554",
+      "chg": "cash 3,711",
+      "dir": "flat",
       "asOf": "Nov 23",
-      "q": "live"
+      "q": "lagged"
     },
     "manganese": {
       "num": "5.98",
